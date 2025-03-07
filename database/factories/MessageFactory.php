@@ -18,22 +18,24 @@ class MessageFactory extends Factory
      */
     public function definition(): array
     {
+        $isGroupMessage = $this->faker->boolean(50);
+
         $senderId = rand(0, 1);
 
-        if($senderId === 0) {
-            $senderId = $this->faker->randomElement(User::pluck('id')->toArray());
-            $receiverId = 1;
-        }else {
-            $receiverId = $this->faker->randomElement(User::pluck('id')->toArray());
-        }
-
+        $senderId = $this->faker->randomElement(User::where('id', '!=', 1)->pluck('id')->toArray());
+        $receiverId = 1;
         $groupId = null;
 
-        if($this->faker->boolean(50)) {
-            $groupId = $group = $this->faker->randomElement(Group::pluck('id')->toArray());
-            $group = Group::find($groupId);
+        if($isGroupMessage) {
+            $group = $this->faker->randomElement(Group::with('users')->get());
+            $groupId = $group->id;
             $senderId = $this->faker->randomElement($group->users->pluck('id')->toArray());
             $receiverId = null;
+        } else {
+            if ($this->faker->boolean(50)) {
+                $senderId = 1;
+                $receiverId = $this->faker->randomElement(User::where('id', '!=', 1)->pluck('id')->toArray());
+            }
         }
 
         return [
