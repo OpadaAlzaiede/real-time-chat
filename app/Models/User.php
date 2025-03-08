@@ -47,11 +47,27 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_admin' => 'bool'
         ];
     }
 
     public function groups(): BelongsToMany {
 
         return $this->belongsToMany(Group::class);
+    }
+
+    public function toConversationArray(): array {
+
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'is_group' => false,
+            'is_user' => true,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
+            'is_admin' => $this->is_admin,
+            'last_message' => $this->last_message,
+            'last_message_date' => $this->last_message_date
+        ];
     }
 }

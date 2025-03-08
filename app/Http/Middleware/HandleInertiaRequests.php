@@ -2,11 +2,19 @@
 
 namespace App\Http\Middleware;
 
+use App\Actions\GetConversationsForSidebarAction;
+use App\Models\Conversation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
+
+    public function __construct(protected GetConversationsForSidebarAction $getConversationsForSidebarAction)
+    {
+        //
+    }
     /**
      * The root template that is loaded on the first page visit.
      *
@@ -34,6 +42,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'conversations' =>  $this->getConversationsForSidebarAction->handle()
         ];
     }
 }
