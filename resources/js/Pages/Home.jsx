@@ -4,11 +4,18 @@ import { useEffect, useState, useRef } from 'react';
 import { ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
 import ConversationHeader from '@/Components/Conversations/ConversationHeader';
 import MessageItem from '@/Components/Messages/MessageItem';
+import MessageInput from '@/Components/Messages/MessageInput';
 
 function Home({ selectedConversation = null, messages = null }) {
 
     const [localMessages, setLocalMessages] = useState([]);
     const messagesCtrRef = useRef(null);
+
+    useEffect(() => {
+        setTimeout(() => {
+            messagesCtrRef.current.scrollTop = messagesCtrRef.current.scrollHeight;
+        }, 10);
+    }, [selectedConversation]);
 
     useEffect(() => {
         setLocalMessages(messages ? messages.data.reverse() : [] );
@@ -51,7 +58,7 @@ function Home({ selectedConversation = null, messages = null }) {
                             </div>
                         )}
                     </div>
-                    {/*<MessageInput conversation={selectedConversation} />*/}
+                    <MessageInput conversation={selectedConversation} />
                 </>
             )
         }
