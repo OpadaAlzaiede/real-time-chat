@@ -13,10 +13,12 @@ class UpdateConversationWithMessageAction {
                 ->where([
                     ['user_one_id', '=', $userOneId],
                     ['user_two_id', '=', $userTwoId]
-                ])->orWhere([
-                    ['user_one_id', '=', $userTwoId],
-                    ['user_two_id', '=', $userOneId]
-                ])
+                ])->orWhere(function($query) use($userOneId, $userTwoId){
+                    $query->where([
+                        ['user_one_id', '=', $userTwoId],
+                        ['user_two_id', '=', $userOneId]
+                    ]);
+                })
                 ->first();
 
         if ($conversation) {

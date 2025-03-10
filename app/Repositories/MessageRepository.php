@@ -64,7 +64,6 @@ class MessageRepository {
         $receiverId = $data['receiver_id'] ?? null;
         $groupId = $data['group_id'] ?? null;
         $files = $data['attachments'] ?? [];
-
         $message = Message::create($data);
 
         $attachments = [];
