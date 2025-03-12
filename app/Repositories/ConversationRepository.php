@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Actions;
+namespace App\Repositories;
 
 use App\Models\Message;
 use App\Models\Conversation;
 
-class UpdateConversationWithMessageAction {
+class ConversationRepository {
 
-    public function handle(int $userOneId, int $userTwoId, Message $message): void {
+    public function updateConversationWithMessage(int $userOneId, int $userTwoId, Message $message): void {
 
         $conversation = Conversation::query()
                 ->where([

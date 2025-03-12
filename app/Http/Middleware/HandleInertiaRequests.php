@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
-            'conversations' =>  $this->getConversationsForSidebarAction->handle()
+            'conversations' =>  $this->getConversationsForSidebarAction->handle(Auth::user())
         ];
     }
 }

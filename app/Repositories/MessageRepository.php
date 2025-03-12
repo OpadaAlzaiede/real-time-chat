@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Storage;
 class MessageRepository {
 
     public function __construct(
-        protected UpdateConversationWithMessageAction $updateConversationWithMessageAction,
-        protected UpdateGroupWithMessageAction $updateGroupWithMessageAction
+        protected ConversationRepository $conversationRepository,
+        protected GroupRepository $groupRepository
     ) {
         //
     }
@@ -26,8 +26,10 @@ class MessageRepository {
         return Message::query()
                 ->where('sender_id', auth()->id())
                 ->where('receiver_id', $user->id)
-                ->orWhere('sender_id', $user->id)
-                ->where('receiver_id', auth()->id())
+                ->orWhere(function($query) use($user) {
+                    $query->where('sender_id', $user->id)
+                        ->where('receiver_id', auth()->id());
+                })
                 ->latest()
                 ->paginate(10);
         }
@@ -50,8 +52,10 @@ class MessageRepository {
         }else {
             $query->where('sender_id', $message->sender_id)
                     ->where('receiver_id', $message->receiver_id)
-                    ->orWhere('sender_id', $message->receiver_id)
-                    ->where('receiver_id', $message->sender_id);
+                    ->orWhere(function($query) use($message) {
+                        $query->where('sender_id', $message->receiver_id)
+                            ->where('receiver_id', $message->sender_id);
+                    });
         }
 
         return $query->latest()
@@ -85,11 +89,11 @@ class MessageRepository {
         }
 
         if($receiverId) {
-            $this->updateConversationWithMessageAction->handle($receiverId, auth()->id(), $message);
+            $this->conversationRepository->updateConversationWithMessage($receiverId, auth()->id(), $message);
         }
 
         if($groupId) {
-            $this->updateGroupWithMessageAction->handle($groupId, $message);
+            $this->groupRepository->updateGroupWithMessage($groupId, $message);
         }
 
         return $message;
